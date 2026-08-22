@@ -1,0 +1,11 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import { useAuth } from './auth'
+import Layout from './components/Layout'
+import LoginPage from './pages/LoginPage'
+import RequestsPage from './pages/RequestsPage'
+import RequestFormPage from './pages/RequestFormPage'
+import RequestDetailPage from './pages/RequestDetailPage'
+import ApprovalsPage from './pages/ApprovalsPage'
+import AdminPage from './pages/AdminPage'
+import ChangePasswordPage from './pages/ChangePasswordPage'
+export default function App(){const{session}=useAuth();if(!session)return <Routes><Route path="/login" element={<LoginPage/>}/><Route path="*" element={<Navigate to="/login" replace/>}/></Routes>;if(session.user.mustChangePassword)return <Routes><Route path="/change-password" element={<ChangePasswordPage/>}/><Route path="*" element={<Navigate to="/change-password" replace/>}/></Routes>;return <Routes><Route element={<Layout/>}><Route index element={<Navigate to="/requests" replace/>}/><Route path="/requests" element={<RequestsPage/>}/><Route path="/requests/new" element={session.user.role==='Admin'?<Navigate to="/requests" replace/>:<RequestFormPage/>}/><Route path="/requests/:id" element={<RequestDetailPage/>}/><Route path="/requests/:id/edit" element={<RequestFormPage/>}/><Route path="/approvals" element={session.user.role==='Manager'?<ApprovalsPage/>:<Navigate to="/requests" replace/>}/><Route path="/admin" element={session.user.role==='Admin'?<AdminPage/>:<Navigate to="/requests" replace/>}/></Route><Route path="*" element={<Navigate to="/" replace/>}/></Routes>}
